@@ -21,21 +21,21 @@ CREATE TABLE IF NOT EXISTS US_categories
 DROP TABLE CA_videos;
 CREATE TABLE IF NOT EXISTS CA_videos
           ( id INT NOT NULL AUTO_INCREMENT,
-			video_id TEXT,
-            trending_date TEXT, -- ALTER to DATE type later
-            title TEXT,
-            channel_title TEXT,
-            category_id INT, 
-            publish_time TEXT, -- ALTER to DATETIME type later
-            tags TEXT,
-            views INT,
-            likes INT,
-            dislikes INT,
-            comment_count INT,
-            comments_disabled CHAR(6),
-            ratings_disabled CHAR(6),
-            video_error_or_removed CHAR(6),
-            description TEXT,
+			video_id TEXT NOT NULL,
+            trending_date TEXT NOT NULL, -- ALTER to DATE type later
+            title TEXT NOT NULL,
+            channel_title TEXT NOT NULL,
+            category_id INT NOT NULL, 
+            publish_time TEXT NOT NULL, -- ALTER to DATETIME type later
+            tags TEXT NOT NULL,
+            views INT NOT NULL,
+            likes INT NOT NULL,
+            dislikes INT NOT NULL,
+            comment_count INT NOT NULL,
+            comments_disabled CHAR(6) NOT NULL,
+            ratings_disabled CHAR(6) NOT NULL,
+            video_error_or_removed CHAR(6) NOT NULL,
+            description TEXT NOT NULL,
 			PRIMARY KEY (id),
              FOREIGN KEY(category_id) 
 				REFERENCES CA_categories(id)
@@ -165,7 +165,47 @@ SET SQL_SAFE_UPDATES = 1;
 
 -- Main Analysis
 
+# Top 10 categories that trend the most
+SELECT
+c2.id, 
+c2.title, 
+COUNT(DISTINCT c1.video_id) AS trending_count
+FROM CA_videos c1
+JOIN CA_categories c2 ON c1.category_id = c2.id
+GROUP BY 1, 2
+ORDER BY 3 DESC;
 
 
+# For each month, rank each category based on its amount of trending videos in CA
+SELECT *, 
+DENSE_RANK() OVER(
+	PARTITION BY month
+    ORDER BY trending_count DESC
+) AS trending_rank
+FROM
+(SELECT
+MONTH(c1.trending_date) as month, 
+c2.id, 
+c2.title, 
+COUNT(DISTINCT c1.video_id) AS trending_count
+	FROM CA_videos c1
+	JOIN CA_categories c2 ON c1.category_id = c2.id
+GROUP BY 1, 2, 3
+ORDER BY 1, 4 DESC) temp;
 
-
+# For each month, rank each category based on its amount of trending videos in US
+SELECT *, 
+DENSE_RANK() OVER(
+	PARTITION BY month
+    ORDER BY trending_count DESC
+) AS trending_rank
+FROM
+(SELECT
+MONTH(u1.trending_date) as month, 
+u2.id, 
+u2.title, 
+COUNT(DISTINCT u1.video_id) AS trending_count
+	FROM US_videos u1
+	JOIN US_categories u2 ON u1.category_id = u2.id
+GROUP BY 1, 2, 3
+ORDER BY 1, 4 DESC) temp;

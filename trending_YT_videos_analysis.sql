@@ -209,3 +209,119 @@ COUNT(DISTINCT u1.video_id) AS trending_count
 	JOIN US_categories u2 ON u1.category_id = u2.id
 GROUP BY 1, 2, 3
 ORDER BY 1, 4 DESC) temp;
+
+
+# Average Daily Views for Most Trending Channels - Use Aggregate Window Function - Visualize in Tableau Later
+
+# Channel with Most Trending Videos - CA - Answer: VikatanTV
+WITH top_CA_channel AS
+(SELECT 
+  channel_title,
+  COUNT(DISTINCT video_id) as trending_videos_count
+FROM 
+  CA_videos
+GROUP BY channel_title
+ORDER BY trending_videos_count DESC
+LIMIT 1)
+
+# Find Average Daily Views for the Channel with Most Trending Videos - CA
+SELECT trending_date, 
+AVG(views) OVER (PARTITION BY trending_date) daily_avg_views
+FROM CA_videos
+WHERE 
+channel_title IN (SELECT channel_title FROM top_CA_channel)
+AND
+trending_date BETWEEN (SELECT MIN(trending_date) FROM CA_videos) AND 
+                            (SELECT MAX(trending_date) FROM CA_videos)
+GROUP BY trending_date;
+
+# Now, compare Average Daily Views with the previous day by calculating % Difference
+WITH top_CA_channel AS
+(SELECT 
+  channel_title,
+  COUNT(DISTINCT video_id) as trending_videos_count
+FROM 
+  CA_videos
+GROUP BY channel_title
+ORDER BY trending_videos_count DESC
+LIMIT 1), 
+daily_avg_views_CA AS 
+(SELECT trending_date as trending_day,
+AVG(views) OVER (PARTITION BY trending_date) daily_avg_views
+FROM CA_videos
+WHERE 
+channel_title IN (SELECT channel_title FROM top_CA_channel)
+AND
+trending_date BETWEEN (SELECT MIN(trending_date) FROM CA_videos) AND 
+                            (SELECT MAX(trending_date) FROM CA_videos)
+GROUP BY 1),
+daily_and_prev_avg_views_CA AS 
+(SELECT trending_day, daily_avg_views, LAG(daily_avg_views) OVER (ORDER BY trending_day) avg_views_lag
+    FROM
+        daily_avg_views_CA b
+    ORDER BY 
+        trending_day)
+
+SELECT trending_day, daily_avg_views, avg_views_lag, 
+ROUND(100.0 * (daily_avg_views - avg_views_lag) / avg_views_lag, 2) AS Perecent_diff
+FROM daily_and_prev_avg_views_CA;
+
+# Repeat Average Daily Views Analysis with US Data
+
+# Channel with Most Trending Videos - US - Answer: ESPN
+WITH top_US_channel AS
+(SELECT 
+  channel_title,
+  COUNT(DISTINCT video_id) as trending_videos_count
+FROM 
+  US_videos
+GROUP BY channel_title
+ORDER BY trending_videos_count DESC
+LIMIT 1)
+
+# Find Average Daily Views for the Channel with Most Trending Videos - US
+SELECT trending_date, 
+AVG(views) OVER (PARTITION BY trending_date) daily_avg_views
+FROM US_videos
+WHERE 
+channel_title IN (SELECT channel_title FROM top_US_channel)
+AND
+trending_date BETWEEN (SELECT MIN(trending_date) FROM US_videos) AND 
+                            (SELECT MAX(trending_date) FROM US_videos)
+GROUP BY trending_date;
+
+# Now, compare Average Daily Views with the previous day by calculating % Difference
+WITH top_US_channel AS
+(SELECT 
+  channel_title,
+  COUNT(DISTINCT video_id) as trending_videos_count
+FROM 
+  US_videos
+GROUP BY channel_title
+ORDER BY trending_videos_count DESC
+LIMIT 1), 
+daily_avg_views_US AS 
+(SELECT trending_date as trending_day,
+AVG(views) OVER (PARTITION BY trending_date) daily_avg_views
+FROM US_videos
+WHERE 
+channel_title IN (SELECT channel_title FROM top_US_channel)
+AND
+trending_date BETWEEN (SELECT MIN(trending_date) FROM US_videos) AND 
+                            (SELECT MAX(trending_date) FROM US_videos)
+GROUP BY 1),
+daily_and_prev_avg_views_US AS 
+(SELECT trending_day, daily_avg_views, LAG(daily_avg_views) OVER (ORDER BY trending_day) avg_views_lag
+    FROM
+        daily_avg_views_US b
+    ORDER BY 
+        trending_day)
+
+SELECT trending_day, daily_avg_views, avg_views_lag, 100.0 * (daily_avg_views - avg_views_lag) / avg_views_lag AS Perecent_diff
+FROM daily_and_prev_avg_views_US;
+
+
+
+
+# NEXT: partition by day and also by category!
+

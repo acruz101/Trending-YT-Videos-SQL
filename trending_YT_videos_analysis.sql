@@ -67,13 +67,12 @@ SET SQL_SAFE_UPDATES = 1;
 
 
 # Top 10 Video Categories For Each Day of the Week
-CREATE VIEW category_trending_count AS
-SELECT c.id , c.title , count(*) AS total_amount, v.trending_date, DAYNAME(v.trending_date) AS day
+WITH category_trending_count AS
+(SELECT c.id , c.title , count(*) AS total_amount, v.trending_date, DAYNAME(v.trending_date) AS day
 FROM US_videos AS v
 INNER JOIN US_categories AS c ON v.category_id = c.id 
-GROUP BY id, title, day;
+GROUP BY id, title, day)
 
-CREATE VIEW categories_ranked_daily AS
 SELECT * FROM 
 	(SELECT id, title, total_amount, day, 
 		DENSE_RANK() OVER(
@@ -81,7 +80,7 @@ SELECT * FROM
 			ORDER BY total_amount DESC
 		) AS category_daily_rank
 	FROM category_trending_count) temp
-	WHERE category_daily_rank <= 10;
+WHERE category_daily_rank <= 10;
 
 
 # Top Trending Channels for each Category
@@ -100,6 +99,7 @@ WHERE channel_category_combin_rank = 1;
 
 
 # The Top Trending Channel for each category from Mon to Fri
+
 WITH daily_trending_channels AS
 (SELECT DAYOFWEEK(v.trending_date) AS day, v.category_id, v.channel_title, c.title, 
 COUNT(*) as trending_amount
@@ -128,24 +128,37 @@ WHERE category_day_rank = 1;
 
 # Channel with Most Trending Videos - Answer: ESPN
 
-WITH top_US_channel AS
-(SELECT 
+CREATE VIEW top_US_channel AS
+SELECT 
   channel_title,
   COUNT(DISTINCT video_id) as trending_videos_count
 FROM 
   US_videos
 GROUP BY channel_title
 ORDER BY trending_videos_count DESC
-LIMIT 1)
+LIMIT 1;
+
 
 # Find Average Daily Views for the Channel with Most Trending Videos 
-
+CREATE VIEW daily_avg_views_US AS 
 SELECT trending_date, 
 AVG(views) OVER (PARTITION BY trending_date) daily_avg_views
 FROM US_videos
 WHERE 
 channel_title IN (SELECT channel_title FROM top_US_channel)
-AND
-trending_date BETWEEN (SELECT MIN(trending_date) FROM US_videos) AND 
-                            (SELECT MAX(trending_date) FROM US_videos)
 GROUP BY trending_date;
+
+
+# Compare Average Daily Views with the Previous Day by Calculating % Difference (for Top Channel)
+
+WITH add_prev_avg_views AS 
+(SELECT trending_date, daily_avg_views, LAG(daily_avg_views) OVER (ORDER BY trending_date) avg_views_lag
+FROM daily_avg_views_US
+ORDER BY trending_date)
+
+SELECT 
+trending_date, 
+daily_avg_views, 
+avg_views_lag, 
+100.0 * (daily_avg_views - avg_views_lag) / avg_views_lag AS Perecent_diff
+FROM add_prev_avg_views;

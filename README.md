@@ -1,4 +1,4 @@
-# Trending-YT-Videos-SQL [In Progress]
+# Trending-YT-Videos-SQL
 A MySQL Project
 
 Dataset Link: https://www.kaggle.com/datasets/datasnaek/youtube-new

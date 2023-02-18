@@ -73,7 +73,12 @@ FROM US_videos AS v
 INNER JOIN US_categories AS c ON v.category_id = c.id 
 GROUP BY id, title, day)
 
-SELECT * FROM 
+SELECT
+day,
+category_daily_rank,
+title,
+total_amount
+FROM 
 	(SELECT id, title, total_amount, day, 
 		DENSE_RANK() OVER(
 			PARTITION BY DAYOFWEEK(trending_date)
@@ -83,20 +88,33 @@ SELECT * FROM
 WHERE category_daily_rank <= 10;
 
 
-# Top Trending Channels for each Category
-SELECT * FROM
+# Top Trending Channel for each Category (and their average statistics)
+SELECT 
+channel_title,
+category_id,
+title as category_title,
+total_trending_videos,
+avg_views,
+avg_likes,
+avg_dislikes,
+avg_comment_count
+FROM
 (SELECT *, DENSE_RANK() OVER(
 	PARTITION BY category_id
     ORDER BY total_trending_videos DESC
 ) AS channel_category_combin_rank
 FROM
-(SELECT v.channel_title, v.category_id, c.title, COUNT(*) as total_trending_videos
+(SELECT v.channel_title, v.category_id, c.title, COUNT(*) as total_trending_videos,
+AVG(views) as avg_views,
+AVG(likes) as avg_likes,
+AVG(dislikes) as avg_dislikes,
+AVG(comment_count) as avg_comment_count
 FROM US_videos v
 INNER JOIN US_categories AS c ON v.category_id = c.id 
-GROUP BY v.channel_title, v.category_id
-ORDER BY v.category_id, total_trending_videos DESC) temp) temp2
+GROUP BY v.category_id
+ORDER BY v.category_id, total_trending_videos DESC) temp
+) temp2
 WHERE channel_category_combin_rank = 1;
-
 
 # The Top Trending Channel for each category from Mon to Fri
 

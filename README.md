@@ -18,7 +18,7 @@ Result (Below is a preview and not the full result):
 
 <img width="306" alt="Screenshot 2023-02-20 at 10 17 44 PM" src="https://user-images.githubusercontent.com/47541514/220262995-8d8b52b7-e8d5-447e-bea1-c5a51a376770.png">
 
-**+ Top Trending Channel for each Category (and their average statistics)**
++ **Top Trending Channel for each Category (and their average statistics)**
 
 Query:
 
@@ -28,7 +28,16 @@ Result (Below is the full result):
 
 <img width="737" alt="Screenshot 2023-02-20 at 10 22 54 PM" src="https://user-images.githubusercontent.com/47541514/220263886-a8872992-1db1-446c-b36f-0773b964ee4f.png">
 
-**+ The Top Trending Channel for each category from Mon to Fri**
++ **The Top Trending Channel for each category from Mon to Fri**
+
+Query:
+
+<img width="412" alt="Screenshot 2023-02-20 at 10 26 00 PM" src="https://user-images.githubusercontent.com/47541514/220264407-471822a6-1c88-4d5f-b1d1-9d2a78afef9e.png">
+
+Result (Below is a preview and not the full result):
+
+<img width="350" alt="Screenshot 2023-02-20 at 10 26 23 PM" src="https://user-images.githubusercontent.com/47541514/220264494-a883b02d-0709-4d2b-ab1a-231b551ea476.png">
+
 + Analyze the Channel with Most Trending Videos in the US
   + Find Average Daily Views with Most Trending Videos
   + Compare Average Daily Views with the Previous Day by Calculating % Difference

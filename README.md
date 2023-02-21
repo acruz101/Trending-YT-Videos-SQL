@@ -51,7 +51,7 @@ In this project, I used MySQL to create a relational database, import the data f
   + Compare Average Daily Views with the Previous Day by Calculating % Difference
     + Query:
 
-<img width="768" alt="Screenshot 2023-02-20 at 10 31 30 PM" src="https://user-images.githubusercontent.com/47541514/220265355-3843600a-432f-4d7a-83de-36540ff004b9.png">
+    <img width="768" alt="Screenshot 2023-02-20 at 10 31 30 PM" src="https://user-images.githubusercontent.com/47541514/220265355-3843600a-432f-4d7a-83de-36540ff004b9.png">
 
     + Result (Below is a preview and not the full result):
     

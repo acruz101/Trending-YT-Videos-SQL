@@ -11,8 +11,11 @@ In this project, I used MySQL to create a relational database, import the data f
 + Top 10 Video Categories For Each Day of the Week
 
 Query:
+
 <img width="613" alt="Screenshot 2023-02-20 at 10 17 15 PM" src="https://user-images.githubusercontent.com/47541514/220262913-8b5783ca-adae-414e-b636-ca841e4f3721.png">
+
 Result (Below is a preview and not the full result):
+
 <img width="306" alt="Screenshot 2023-02-20 at 10 17 44 PM" src="https://user-images.githubusercontent.com/47541514/220262995-8d8b52b7-e8d5-447e-bea1-c5a51a376770.png">
 
 + Top Trending Channel for each Category (and their average statistics)

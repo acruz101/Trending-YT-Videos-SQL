@@ -40,6 +40,21 @@ In this project, I used MySQL to create a relational database, import the data f
 
 + Analyze the Channel with Most Trending Videos in the US
   + Find Average Daily Views with Most Trending Videos
+    + Query:
+
+    <img width="506" alt="Screenshot 2023-02-20 at 10 29 29 PM" src="https://user-images.githubusercontent.com/47541514/220265013-c7f6f5c7-10d9-422f-8d56-81b3a818cab4.png">
+    
+    + Result (Below is a preview and not the full result):
+    
+    <img width="200" alt="Screenshot 2023-02-20 at 10 30 48 PM" src="https://user-images.githubusercontent.com/47541514/220265227-aaa6ae95-968b-46c3-9893-3c54a499fb33.png">
+
   + Compare Average Daily Views with the Previous Day by Calculating % Difference
+    + Query:
+
+<img width="768" alt="Screenshot 2023-02-20 at 10 31 30 PM" src="https://user-images.githubusercontent.com/47541514/220265355-3843600a-432f-4d7a-83de-36540ff004b9.png">
+
+    + Result (Below is a preview and not the full result):
+    
+    <img width="367" alt="Screenshot 2023-02-20 at 10 32 19 PM" src="https://user-images.githubusercontent.com/47541514/220265502-5cfe5fc4-02e2-44ba-9c88-4fd09d1a0000.png">
 
 (I used Python to extract data from JSON files, convert them into CSV files, so I could export them into MySQL database.)
